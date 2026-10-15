@@ -412,6 +412,8 @@ tr.fit-row td:first-child { box-shadow: inset 4px 0 0 var(--ball); }
 }
 .care p { color: var(--muted); font-size: 0.94rem; }
 .care .k { font-family: var(--f-display); font-size: 2.4rem; font-weight: 800; text-transform: uppercase; line-height: 1.05; color: var(--court); }
+/* a short court-line bar in ball yellow under each figure */
+.care .k::after { content: ""; display: block; width: 56px; height: 6px; border-radius: 3px; background: var(--ball); margin-top: 10px; }
 
 .caveats {
   list-style: none; margin: 0; padding: 0; display: grid; gap: 14px;
@@ -421,9 +423,12 @@ tr.fit-row td:first-child { box-shadow: inset 4px 0 0 var(--ball); }
   background: var(--surface); border-radius: 14px; padding: 18px 20px;
   color: var(--muted); font-size: 0.94rem; display: grid; gap: 6px; align-content: start;
 }
+/* caveat titles: court blue with a ball-yellow highlighter stroke under the lower half of the letters */
 .caveats li strong {
-  display: block; color: var(--ink); font-family: var(--f-display); font-weight: 700;
-  font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.02em;
+  justify-self: start; width: fit-content; margin-bottom: 4px; padding: 0 4px; margin-inline-start: -4px;
+  color: var(--court); font-family: var(--f-display); font-weight: 800;
+  font-size: 1.3rem; line-height: 1.2; text-transform: uppercase; letter-spacing: 0.02em;
+  background-image: linear-gradient(transparent 58%, var(--ball) 58%, var(--ball) 92%, transparent 92%);
 }
 ol.sources { columns: 2 340px; column-gap: 32px; padding-inline-start: 20px; margin: 0; font-size: 0.88rem; }
 ol.sources li { break-inside: avoid; margin-bottom: 8px; color: var(--muted); }
@@ -758,6 +763,8 @@ footer { color: var(--muted); font-size: 0.84rem; border-top: 1px solid var(--li
     root.style.setProperty("--f-sb", sf ? sf.b : '"Segoe UI"');
     document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
     document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+    // caveat titles stand on their own line now, so they drop their closing full stop
+    document.querySelectorAll(".caveats strong").forEach(s => { s.textContent = s.textContent.replace(/\s*[.:。।]\s*$/, ""); });
     document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
     document.querySelectorAll("[data-i18n-aria]").forEach(el => { el.setAttribute("aria-label", t(el.dataset.i18nAria)); });
     buildMonths();
