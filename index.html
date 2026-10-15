@@ -100,6 +100,27 @@ body {
       linear-gradient(var(--ground-band), var(--ground-band)) 0 0 / 100% var(--band) no-repeat;
   }
 }
+/* desktop: background option 2E, a half court seen from above with the net in view. The title column sits on the
+   dark back-wall zone on the left; script sets --zone (back line), --svc (service line), --net, --mid (centre line). */
+@media (min-width: 1100px) {
+  .courtbg {
+    --lw: 8px; --mesh: rgba(225, 235, 245, 0.6);
+    background:
+      linear-gradient(var(--court-line), var(--court-line)) var(--zone) var(--band) / calc(100% - var(--zone)) var(--lw) no-repeat,
+      linear-gradient(var(--court-line), var(--court-line)) var(--zone) 100% / calc(100% - var(--zone)) var(--lw) no-repeat,
+      linear-gradient(var(--court-line), var(--court-line)) var(--zone) var(--band) / var(--lw) calc(100% - var(--band)) no-repeat,
+      linear-gradient(var(--court-line), var(--court-line)) var(--svc) var(--band) / var(--lw) calc(100% - var(--band)) no-repeat,
+      linear-gradient(var(--court-line), var(--court-line)) calc(var(--svc) - 12px) var(--mid) / calc(100% - var(--svc) + 12px) var(--lw) no-repeat,
+      linear-gradient(#ffffff, #ffffff) calc(var(--net) + 14px) calc(var(--band) - 14px) / 5px calc(100% - var(--band) + 14px) no-repeat,
+      repeating-linear-gradient(0deg, var(--mesh) 0 1.2px, transparent 1.2px 7px) var(--net) calc(var(--band) - 14px) / 14px calc(100% - var(--band) + 14px) no-repeat,
+      repeating-linear-gradient(90deg, var(--mesh) 0 1.2px, transparent 1.2px 7px) var(--net) calc(var(--band) - 14px) / 14px calc(100% - var(--band) + 14px) no-repeat,
+      linear-gradient(rgba(10, 24, 40, 0.6), rgba(10, 24, 40, 0.6)) var(--net) calc(var(--band) - 14px) / 14px calc(100% - var(--band) + 14px) no-repeat,
+      linear-gradient(90deg, rgba(4, 20, 40, 0.3), transparent) calc(var(--net) + 19px) var(--band) / 46px calc(100% - var(--band)) no-repeat,
+      linear-gradient(var(--ground), var(--ground)) var(--zone) var(--band) / calc(100% - var(--zone)) 100% no-repeat,
+      linear-gradient(var(--ground-band), var(--ground-band)) 0 0 / 100% 100% no-repeat;
+  }
+  header.hero { max-width: 520px; }
+}
 /* text sitting directly on the court turns light; cards keep the theme's own colours */
 .wrap {
   --ink: var(--ground-ink); --muted: var(--ground-muted); --line: var(--ground-line); --court: var(--ground-link);
@@ -1270,7 +1291,17 @@ If the place is unknown or ambiguous, reply {"error": "short reason"}.`;
     court.style.setProperty("--court-h", Math.max(320, Math.round(top - 30)) + "px");
     // the band beyond the sideline always holds the whole top bar, whatever the language or screen width
     const bar = document.querySelector(".topbar").getBoundingClientRect();
-    court.style.setProperty("--band", Math.max(64, Math.round(bar.bottom + window.scrollY + 12)) + "px");
+    const band = Math.max(64, Math.round(bar.bottom + window.scrollY + 12));
+    court.style.setProperty("--band", band + "px");
+    // desktop half court (2E): back line just right of the title column, then the real proportions of a half court
+    // (service line 3.05 m in from the back line, net 10 m in), with 32% of the half court's depth left beyond the net
+    const W = document.documentElement.clientWidth;
+    const zone = Math.round(document.querySelector("header.hero").getBoundingClientRect().left + 560);
+    const half = (W - zone) * 0.68;
+    court.style.setProperty("--zone", zone + "px");
+    court.style.setProperty("--svc", Math.round(zone + half * 0.305) + "px");
+    court.style.setProperty("--net", Math.round(zone + half) + "px");
+    court.style.setProperty("--mid", Math.round((band + Math.max(320, top - 30)) / 2) + "px");
   }
   if (window.ResizeObserver) new ResizeObserver(sizeCourt).observe(document.querySelector(".wrap"));
   window.addEventListener("resize", sizeCourt);
