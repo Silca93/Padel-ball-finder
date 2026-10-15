@@ -116,8 +116,28 @@ body {
       repeating-linear-gradient(90deg, var(--mesh) 0 1.2px, transparent 1.2px 7px) var(--net) calc(var(--band) - 14px) / 14px calc(100% - var(--band) + 14px) no-repeat,
       linear-gradient(rgba(10, 24, 40, 0.6), rgba(10, 24, 40, 0.6)) var(--net) calc(var(--band) - 14px) / 14px calc(100% - var(--band) + 14px) no-repeat,
       linear-gradient(90deg, rgba(4, 20, 40, 0.3), transparent) calc(var(--net) + 19px) var(--band) / 46px calc(100% - var(--band)) no-repeat,
-      linear-gradient(var(--ground), var(--ground)) var(--zone) var(--band) / calc(100% - var(--zone)) 100% no-repeat,
+      /* option 2F: the court surface in hard diagonal bands of real padel turf colours, starting from classic blue */
+      linear-gradient(118deg, #2160a5 0 16.67%, #2e8a45 16.67% 33.33%, #dbb12a 33.33% 50%, #c4602e 50% 66.67%, #ad2c2b 66.67% 83.33%, #474d54 83.33% 100%)
+        var(--zone) var(--band) / calc(100% - var(--zone)) calc(100% - var(--band)) no-repeat,
       linear-gradient(var(--ground-band), var(--ground-band)) 0 0 / 100% 100% no-repeat;
+  }
+  /* matte turf texture over the court: sand-infill grain plus the faint rows of the tufted fibre,
+     blended so it darkens and lightens each colour the same way */
+  .courtbg::before, .courtbg::after {
+    content: ""; position: absolute; left: var(--zone); top: var(--band); right: 0; bottom: 0;
+  }
+  .courtbg::before {
+    mix-blend-mode: overlay; opacity: 0.55;
+    background:
+      repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0 1px, transparent 1px 5px),
+      repeating-linear-gradient(90deg, transparent 0 3px, rgba(255, 255, 255, 0.12) 3px 4px, transparent 4px 11px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0.6 0.6 0.6 0 -0.4 0.6 0.6 0.6 0 -0.4 0.6 0.6 0.6 0 -0.4 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E") 0 0 / 240px 240px;
+  }
+  /* floodlight sheen and a soft falloff toward the edges, so the mat reads as a lit surface */
+  .courtbg::after {
+    background:
+      radial-gradient(ellipse 70% 90% at 35% 30%, rgba(255, 255, 255, 0.12), transparent 70%),
+      radial-gradient(ellipse 120% 120% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.22));
   }
   header.hero { max-width: 520px; }
 }
