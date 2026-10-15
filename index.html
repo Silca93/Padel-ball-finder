@@ -179,6 +179,7 @@ header.hero h1 {
   text-transform: uppercase; letter-spacing: -0.005em; max-width: 13ch;
 }
 :root[lang="zh"] header.hero h1, :root[lang="ja"] header.hero h1, :root[lang="hi"] header.hero h1, :root[lang="ar"] header.hero h1 { line-height: 1.15; font-size: clamp(2.1rem, 5.4vw, 3.7rem); max-width: 16ch; }
+header.hero h1 .nobr { white-space: nowrap; }  /* the ball never wraps away from the last word */
 header.hero h1 .dot {
   display: inline-block; width: 0.5em; height: 0.5em; border-radius: 50%;
   background: var(--ball); vertical-align: 0.06em; margin-inline-start: 0.12em;
@@ -456,7 +457,7 @@ footer { color: var(--muted); font-size: 0.84rem; border-top: 1px solid var(--li
       </div>
     </div>
     <header class="hero">
-      <h1><span data-i18n="hero_h1">Every court plays different</span><span class="dot" aria-hidden="true"></span></h1>
+      <h1 id="heroTitle">Every court plays <span class="nobr">different<span class="dot" aria-hidden="true"></span></span></h1>
       <p class="lede" data-i18n="hero_lede"></p>
       <div class="brandstrip" id="brandstrip" data-i18n-aria="brands_aria"></div>
     </header>
@@ -769,6 +770,10 @@ footer { color: var(--muted); font-size: 0.84rem; border-top: 1px solid var(--li
     root.style.setProperty("--f-sb", sf ? sf.b : '"Segoe UI"');
     document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = t(el.dataset.i18n); });
     document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = t(el.dataset.i18nHtml); });
+    // the title's tennis ball is glued to the last word (last two characters in Chinese and Japanese)
+    const title = t("hero_h1").trim();
+    const m = (lang === "zh" || lang === "ja") ? title.match(/^([\s\S]*?)([\s\S]{1,2})$/) : title.match(/^([\s\S]*?)(\S+)$/);
+    $("heroTitle").innerHTML = esc(m ? m[1] : "") + `<span class="nobr">${esc(m ? m[2] : title)}<span class="dot" aria-hidden="true"></span></span>`;
     // caveat titles stand on their own line now, so they drop their closing full stop
     document.querySelectorAll(".caveats strong").forEach(s => { s.textContent = s.textContent.replace(/\s*[.:。।]\s*$/, ""); });
     document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
