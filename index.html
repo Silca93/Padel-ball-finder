@@ -105,11 +105,16 @@ body {
   --ink: var(--ground-ink); --muted: var(--ground-muted); --line: var(--ground-line); --court: var(--ground-link);
   color: var(--ink); text-shadow: 0 1px 2px rgba(4, 20, 40, 0.35);
 }
-.finder, .chart-card, .table-scroll, .phys, .drop, .findbar, .ballhits, .care > div, .caveats > li {
+.finder, .chart-card, .table-scroll, .phys, .drop, .findbar, .ballhits, .care > div, .caveats > li, .section-head .lede {
   --ink: var(--card-ink); --muted: var(--card-muted); --line: var(--card-line); --court: var(--card-court);
   color: var(--ink); text-shadow: none;
 }
-.findbar, .table-scroll, .chart-card, .finder, .drop, .care > div, .caveats > li { box-shadow: 0 12px 32px rgba(3, 18, 36, 0.28); }
+.findbar, .table-scroll, .chart-card, .finder, .drop, .care > div, .caveats > li, .section-head .lede { box-shadow: 0 12px 32px rgba(3, 18, 36, 0.28); }
+/* section intros sit on a white card too, like the rest of the content */
+.section-head .lede {
+  justify-self: start; max-width: 72ch; margin-top: 6px; padding: 16px 20px;
+  background: var(--surface); border-radius: 14px; color: var(--card-ink); font-size: 1rem;
+}
 h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
 h2 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); font-weight: 800; text-transform: uppercase; letter-spacing: 0.01em; line-height: 1.05; }
 h3 { font-size: 1.3rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
