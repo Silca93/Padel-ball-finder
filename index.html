@@ -4,6 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="description" content="Which padel ball suits the altitude, temperature and humidity where you play: 31 balls compared, live weather, 13 languages.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#12406f">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Padel Ball Conditions Guide">
+<meta property="og:description" content="Which padel ball suits the altitude, temperature and humidity where you play: 31 balls compared, live weather, 13 languages.">
+<meta property="og:url" content="https://silca93.github.io/Padel-ball-finder/">
+<meta property="og:image" content="https://silca93.github.io/Padel-ball-finder/icon-512.png">
+<meta name="twitter:card" content="summary">
 <title>Padel Ball Conditions Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -156,7 +166,9 @@ section { display: grid; gap: 20px; }
   border: 1px solid var(--card-line); background: var(--surface); color: var(--card-ink); text-shadow: none;
 }
 .langpick select:focus-visible { outline: 2px solid var(--court); outline-offset: 1px; }
-header.hero { display: grid; gap: 16px; }
+/* the sideline sits 12px under the top bar and is up to 12px thick; keep the title well clear of it */
+header.hero { display: grid; gap: 16px; margin-top: 54px; }
+@media (max-width: 640px) { header.hero { margin-top: 42px; } }
 header.hero h1 {
   font-size: clamp(2.5rem, 6.6vw, 4.8rem); line-height: 0.92; font-weight: 800;
   text-transform: uppercase; letter-spacing: -0.005em; max-width: 13ch;
@@ -406,7 +418,7 @@ footer { color: var(--muted); font-size: 0.84rem; border-top: 1px solid var(--li
         </label>
       </div>
     </div>
-    <header class="hero" style="margin-top:16px">
+    <header class="hero">
       <h1><span data-i18n="hero_h1">Pick the ball for the air you play in</span><span class="dot" aria-hidden="true"></span></h1>
       <p class="lede" data-i18n="hero_lede"></p>
       <div class="brandstrip" id="brandstrip" data-i18n-aria="brands_aria"></div>
