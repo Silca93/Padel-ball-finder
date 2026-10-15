@@ -329,15 +329,16 @@ tbody tr.flash td { animation: rowflash 2.2s ease-out; }
 .clabel .b { color: var(--muted); font-size: 0.76rem; display: block; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
 .legacy { font-size: 0.68rem; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; margin-inline-start: 4px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
 .ctrack { position: relative; height: 40px; }
-/* --e (0–1) is each ball's fit, eased: the best fits are saturated ball yellow, poor fits wash out to grey */
-.crow { --e: 0; }
+/* --e (0–1) is each ball's fit, eased: the best fits are bright optic padel-ball yellow, poor fits wash out to grey.
+   Mixing in oklch keeps the yellow vivid instead of sliding towards olive. */
+.crow { --e: 0; --hi: #ecfc2b; --hi-edge: #c9d80f; }
 .crow .clabel { opacity: calc(0.42 + var(--e) * 0.58); transition: opacity .25s; }
 .cbar {
   position: absolute; border-radius: 999px;
   height: calc(7px + var(--e) * 8px); top: calc(20px - (7px + var(--e) * 8px) / 2);
-  background: color-mix(in srgb, var(--ball) calc(var(--e) * 100%), var(--track));
-  border: 1px solid color-mix(in srgb, var(--ink) calc(var(--e) * 50%), var(--line));
-  box-shadow: 0 0 0 calc(var(--e) * var(--e) * 3px) color-mix(in srgb, var(--ball) 35%, transparent);
+  background: color-mix(in oklch, var(--hi) calc(var(--e) * 100%), var(--track));
+  border: 1px solid color-mix(in oklch, var(--hi-edge) calc(var(--e) * 100%), var(--line));
+  box-shadow: 0 0 calc(var(--e) * var(--e) * 10px) color-mix(in srgb, var(--hi) calc(var(--e) * var(--e) * 70%), transparent);
   transition: background .25s, border-color .25s, height .25s, top .25s;
 }
 .crow.fit .clabel .txt { font-weight: 700; }
@@ -559,8 +560,8 @@ footer { color: var(--muted); font-size: 0.84rem; border-top: 1px solid var(--li
     </div>
     <div class="chart-card">
       <div class="chart-legend">
-        <span><span class="sw" style="background:var(--ball);border:1px solid color-mix(in srgb, var(--ink) 50%, var(--line))"></span><span data-i18n="leg_fit"></span></span>
-        <span><span class="sw" style="background:color-mix(in srgb, var(--ball) 40%, var(--track));border:1px solid var(--line)"></span><span data-i18n="leg_close"></span></span>
+        <span><span class="sw" style="background:#ecfc2b;border:1px solid #c9d80f"></span><span data-i18n="leg_fit"></span></span>
+        <span><span class="sw" style="background:color-mix(in oklch, #ecfc2b 40%, var(--track));border:1px solid var(--line)"></span><span data-i18n="leg_close"></span></span>
         <span><span class="sw" style="background:var(--track);border:1px solid var(--line);opacity:.7"></span><span data-i18n="leg_out"></span></span>
         <label class="toggle" hidden><input type="checkbox" id="showLegacy" checked> <span data-i18n="show_legacy"></span></label>
         <span style="margin-inline-start:auto;font-weight:600;color:var(--court)" data-i18n="row_hint"></span>
