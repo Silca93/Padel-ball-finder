@@ -121,6 +121,14 @@ body {
   }
   header.hero { max-width: 520px; }
 }
+/* court lines carried down the whole page, behind the content: sidelines framing the column and a
+   service line in the gap between sections. Script places them; they never cross text. */
+.pagelines { position: absolute; top: 0; left: 0; right: 0; height: 0; z-index: 0; pointer-events: none; }
+.pagelines i { position: absolute; display: block; background: var(--court-line); opacity: 0.55; }
+.pagelines .h { height: 4px; left: 0; right: 0; }
+.pagelines .v { width: 4px; }
+/* in the wider comparison section only the table breaks out; its heading and legend stay in the column, inside the sidelines */
+section.wide > .section-head, section.wide > .chart-legend { padding-inline: var(--wide-inset, 0px); }
 /* text sitting directly on the court turns light; cards keep the theme's own colours */
 .wrap {
   --ink: var(--ground-ink); --muted: var(--ground-muted); --line: var(--ground-line); --court: var(--ground-link);
@@ -482,6 +490,7 @@ footer { color: var(--muted); font-size: 0.84rem; border-top: 1px solid var(--li
 </head>
 <body>
 <div class="courtbg" aria-hidden="true"></div>
+<div class="pagelines" id="pageLines" aria-hidden="true"></div>
 <div class="wrap">
   <div>
     <div class="topbar">
@@ -1302,9 +1311,39 @@ If the place is unknown or ambiguous, reply {"error": "short reason"}.`;
     court.style.setProperty("--svc", Math.round(zone + half * 0.305) + "px");
     court.style.setProperty("--net", Math.round(zone + half) + "px");
     court.style.setProperty("--mid", Math.round((band + Math.max(320, top - 30)) / 2) + "px");
+    drawPageLines(Math.max(320, top - 30));
+  }
+
+  // service lines between sections, plus sidelines down both sides of the column where there is a margin for them
+  function drawPageLines(courtBottom) {
+    const box = $("pageLines");
+    const sy = window.scrollY;
+    const wrap = document.querySelector(".wrap").getBoundingClientRect();
+    const docH = document.documentElement.scrollHeight;
+    const parts = [];
+    const wide = document.querySelector("section.wide");
+    if (wide) wide.style.setProperty("--wide-inset", Math.max(0, Math.round(wrap.left - wide.getBoundingClientRect().left)) + "px");
+    const sections = [...document.querySelectorAll(".wrap > section")];
+    sections.slice(1).forEach(sec => {
+      const y = Math.round(sec.getBoundingClientRect().top + sy - 30);
+      parts.push(`<i class="h" style="top:${y}px"></i>`);
+    });
+    const margin = wrap.left;
+    if (margin >= 56) {
+      const gap = Math.min(36, Math.round(margin / 2));
+      const top = courtBottom, h = docH - courtBottom;
+      parts.push(`<i class="v" style="top:${top}px;height:${h}px;left:${Math.round(wrap.left - gap - 2)}px"></i>`);
+      parts.push(`<i class="v" style="top:${top}px;height:${h}px;left:${Math.round(wrap.right + gap - 2)}px"></i>`);
+    }
+    box.innerHTML = parts.join("");
   }
   if (window.ResizeObserver) new ResizeObserver(sizeCourt).observe(document.querySelector(".wrap"));
   window.addEventListener("resize", sizeCourt);
+  // also draw right away and once fonts and images have settled: a tab opened in the background
+  // does not deliver resize-observer callbacks until it is shown
+  window.addEventListener("load", sizeCourt);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeCourt);
+  setTimeout(sizeCourt, 0);
 
   // ---------- ball search (top bar) ----------
   const ballLabel = b => b.brand + " " + b.name;
