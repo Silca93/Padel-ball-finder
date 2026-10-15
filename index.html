@@ -81,6 +81,19 @@ body {
 .wrap { max-width: 1140px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 56px; position: relative; z-index: 1; }
 .wrap > * { min-width: 0; }
 
+/* sand scattered over the turf (background option 2A); fixed behind everything, under the court lines.
+   Uneven tile sizes stop the grains from lining up into a visible grid. */
+.sandbg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6;
+  background:
+    radial-gradient(circle, rgba(232,212,168,0.75) 0 1.3px, transparent 1.8px) 0 0 / 23px 29px,
+    radial-gradient(circle, rgba(246,232,200,0.6) 0 1px, transparent 1.5px) 7px 11px / 37px 31px,
+    radial-gradient(circle, rgba(206,182,134,0.7) 0 1.6px, transparent 2.2px) 13px 5px / 53px 47px,
+    radial-gradient(circle, rgba(252,244,222,0.5) 0 0.8px, transparent 1.3px) 3px 19px / 17px 19px,
+    radial-gradient(circle, rgba(220,196,148,0.55) 0 1.1px, transparent 1.6px) 29px 3px / 61px 43px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .sandbg { opacity: 0.45; } }
+:root[data-theme="dark"] .sandbg { opacity: 0.45; }
 /* the court corner behind the hero: band beyond the sideline, sideline, service line, and the centre line
    running under the hero; the rest of the page is plain court blue so reading text never crosses a line */
 .courtbg {
@@ -458,6 +471,8 @@ footer { color: var(--muted); font-size: 0.84rem; border-top: 1px solid var(--li
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
+
+<div class="sandbg" aria-hidden="true"></div>
 </head>
 <body>
 <div class="courtbg" aria-hidden="true"></div>
