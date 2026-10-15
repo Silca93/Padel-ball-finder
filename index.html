@@ -68,7 +68,8 @@ body {
   padding-right: max(16px, env(safe-area-inset-right, 0px));
   padding-block: 0 64px;
 }
-.wrap { max-width: 1140px; margin: 0 auto; display: grid; gap: 56px; position: relative; z-index: 1; }
+.wrap { max-width: 1140px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 56px; position: relative; z-index: 1; }
+.wrap > * { min-width: 0; }
 
 /* the court corner behind the hero: band beyond the sideline, sideline, service line, and the centre line
    running under the hero; the rest of the page is plain court blue so reading text never crosses a line */
@@ -113,6 +114,14 @@ section { display: grid; gap: 20px; }
 
 /* ---------- top bar + hero ---------- */
 .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 18px; flex-wrap: wrap; }
+@media (max-width: 640px) {
+  /* phones: one row in the band; the tagline is cut with an ellipsis and the picker drops its label */
+  .topbar { flex-wrap: nowrap; padding-top: 14px; }
+  .topbar > .eyebrow { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.8rem; letter-spacing: 0.1em; }
+  .topbar .topctl { flex: none; }
+  .langpick > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .langpick select { font-size: 0.88rem; padding: 5px 8px; }
+}
 .topctl { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .ballsearch { position: relative; display: flex; align-items: center; }
 .ballsearch > svg { position: absolute; inset-inline-start: 10px; width: 16px; height: 16px; color: var(--muted); pointer-events: none; }
@@ -164,8 +173,14 @@ header.hero h1 .dot::before, header.hero h1 .dot::after {
 }
 header.hero h1 .dot::before { left: -0.34em; top: 0; }
 header.hero h1 .dot::after { right: -0.34em; top: 0; }
-.brandstrip { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-.brandstrip .logo-tile { height: 40px; padding: 8px 12px; }
+.brandstrip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.brandstrip .logo-tile { height: 30px; padding: 6px 9px; border-radius: 6px; }
+.brandstrip .logo-tile img { max-width: 72px; }
+.brandstrip .logo-tile .word { font-size: 0.82rem; }
+@media (max-width: 640px) {
+  .brandstrip .logo-tile { height: 26px; padding: 5px 7px; }
+  .brandstrip .logo-tile img { max-width: 60px; }
+}
 
 /* logo + photo tiles */
 .logo-tile { background: var(--tile); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--line); direction: ltr; }
@@ -1156,7 +1171,11 @@ If the place is unknown or ambiguous, reply {"error": "short reason"}.`;
     const fb = document.querySelector(".findbar");
     if (!fb) return;
     const top = fb.getBoundingClientRect().top + window.scrollY;
-    document.querySelector(".courtbg").style.setProperty("--court-h", Math.max(320, Math.round(top - 30)) + "px");
+    const court = document.querySelector(".courtbg");
+    court.style.setProperty("--court-h", Math.max(320, Math.round(top - 30)) + "px");
+    // the band beyond the sideline always holds the whole top bar, whatever the language or screen width
+    const bar = document.querySelector(".topbar").getBoundingClientRect();
+    court.style.setProperty("--band", Math.max(64, Math.round(bar.bottom + window.scrollY + 12)) + "px");
   }
   if (window.ResizeObserver) new ResizeObserver(sizeCourt).observe(document.querySelector(".wrap"));
   window.addEventListener("resize", sizeCourt);
