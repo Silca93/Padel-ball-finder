@@ -105,11 +105,11 @@ body {
   --ink: var(--ground-ink); --muted: var(--ground-muted); --line: var(--ground-line); --court: var(--ground-link);
   color: var(--ink); text-shadow: 0 1px 2px rgba(4, 20, 40, 0.35);
 }
-.finder, .chart-card, .table-scroll, .phys, .drop, .findbar, .ballhits {
+.finder, .chart-card, .table-scroll, .phys, .drop, .findbar, .ballhits, .care > div, .caveats > li {
   --ink: var(--card-ink); --muted: var(--card-muted); --line: var(--card-line); --court: var(--card-court);
   color: var(--ink); text-shadow: none;
 }
-.findbar, .table-scroll, .chart-card, .finder, .drop { box-shadow: 0 12px 32px rgba(3, 18, 36, 0.28); }
+.findbar, .table-scroll, .chart-card, .finder, .drop, .care > div, .caveats > li { box-shadow: 0 12px 32px rgba(3, 18, 36, 0.28); }
 h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; }
 h2 { font-size: clamp(1.8rem, 3.6vw, 2.5rem); font-weight: 800; text-transform: uppercase; letter-spacing: 0.01em; line-height: 1.05; }
 h3 { font-size: 1.3rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
@@ -349,11 +349,24 @@ tbody tr.flash td { animation: rowflash 2.2s ease-out; }
 
 /* ---------- table ---------- */
 .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
-table { border-collapse: collapse; width: 100%; min-width: 1040px; font-size: 0.88rem; }
-th, td { text-align: start; padding: 11px 12px; vertical-align: top; border-bottom: 1px solid var(--line); }
+table { border-collapse: collapse; width: 100%; min-width: 940px; font-size: 0.88rem; }
+th, td { text-align: start; padding: 11px 10px; vertical-align: top; border-bottom: 1px solid var(--line); }
+/* the comparison table breaks out of the page column on desktop, up to 1400px, centred on the page;
+   56px keeps it clear of the window edges and the scrollbar, so the page itself never scrolls sideways */
+@media (min-width: 900px) {
+  section.wide { --wide: min(1400px, calc(100vw - 56px)); width: var(--wide); margin-inline-start: calc((100% - var(--wide)) / 2); }
+}
+/* small laptops: tighter cells so all ten columns fit without sideways scrolling */
+@media (max-width: 1180px) {
+  section.wide th, section.wide td { padding: 10px 7px; }
+  section.wide table { font-size: 0.84rem; }
+  section.wide td.ball-cell { min-width: 170px; }
+  section.wide .ballhead { grid-template-columns: 44px minmax(0, 1fr); gap: 10px; }
+  section.wide .ballhead .photo { width: 44px; height: 60px; }
+}
 th { font-family: var(--f-display); font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--surface); }
 tbody tr:last-child td { border-bottom: 0; }
-td.ball-cell { min-width: 220px; }
+td.ball-cell { min-width: 200px; }
 .ballhead { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; align-items: center; }
 .ballhead .photo { width: 52px; height: 70px; padding: 3px; }
 .ballhead .logo-tile { height: 22px; padding: 3px 6px; border-radius: 5px; margin-bottom: 4px; }
@@ -392,13 +405,26 @@ tr.fit-row td:first-child { box-shadow: inset 4px 0 0 var(--ball); }
 
 .care { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 @media (max-width: 760px) { .care { grid-template-columns: 1fr; } }
-.care div { display: grid; gap: 6px; padding: 16px 0; border-top: 1px solid var(--line); }
+/* care tips and caveats sit on white cards like the rest of the page */
+.care > div {
+  display: grid; gap: 8px; align-content: start; padding: 20px 22px;
+  background: var(--surface); border-radius: 14px; border-top: 4px solid var(--ball);
+}
 .care p { color: var(--muted); font-size: 0.94rem; }
-.care .k { font-family: var(--f-display); font-size: 2.2rem; font-weight: 800; text-transform: uppercase; line-height: 1.05; }
+.care .k { font-family: var(--f-display); font-size: 2.4rem; font-weight: 800; text-transform: uppercase; line-height: 1.05; color: var(--court); }
 
-.caveats { display: grid; gap: 10px; max-width: 75ch; }
-.caveats li { color: var(--muted); }
-.caveats li strong { color: var(--ink); font-weight: 600; }
+.caveats {
+  list-style: none; margin: 0; padding: 0; display: grid; gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+}
+.caveats > li {
+  background: var(--surface); border-radius: 14px; padding: 18px 20px;
+  color: var(--muted); font-size: 0.94rem; display: grid; gap: 6px; align-content: start;
+}
+.caveats li strong {
+  display: block; color: var(--ink); font-family: var(--f-display); font-weight: 700;
+  font-size: 1.15rem; text-transform: uppercase; letter-spacing: 0.02em;
+}
 ol.sources { columns: 2 340px; column-gap: 32px; padding-inline-start: 20px; margin: 0; font-size: 0.88rem; }
 ol.sources li { break-inside: avoid; margin-bottom: 8px; color: var(--muted); }
 footer { color: var(--muted); font-size: 0.84rem; border-top: 1px solid var(--line); padding-top: 16px; display: grid; gap: 6px; }
@@ -530,7 +556,7 @@ footer { color: var(--muted); font-size: 0.84rem; border-top: 1px solid var(--li
     </div>
   </section>
 
-  <section aria-labelledby="table-h">
+  <section aria-labelledby="table-h" class="wide">
     <div class="section-head">
       <h2 id="table-h" data-i18n="table_h"></h2>
       <p class="lede" data-i18n="table_lede"></p>
