@@ -377,6 +377,15 @@ th, td { text-align: start; padding: 11px 10px; vertical-align: top; border-bott
   section.wide .ballhead .photo { width: 44px; height: 60px; }
 }
 th { font-family: var(--f-display); font-size: 0.85rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; background: var(--surface); }
+/* comparison table headings: bigger, heavier and in full ink so the columns read at a glance */
+section.wide th { font-size: 1.08rem; font-weight: 800; letter-spacing: 0.05em; color: var(--ink); line-height: 1.15; padding-top: 14px; padding-bottom: 12px; border-bottom: 2px solid var(--ink); }
+/* long words (German, Russian…) hyphenate instead of forcing the table wider */
+/* fixed column shares (see the colgroup) so no column gets starved; long words carry soft hyphens added in script */
+section.wide table { table-layout: fixed; }
+section.wide th, section.wide td { hyphens: manual; overflow-wrap: break-word; }
+section.wide .chip { white-space: normal; text-align: center; }
+section.wide td.ball-cell { min-width: 0; }
+@media (max-width: 1180px) { section.wide th { font-size: 0.95rem; letter-spacing: 0.02em; } }
 tbody tr:last-child td { border-bottom: 0; }
 td.ball-cell { min-width: 200px; }
 .ballhead { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; align-items: center; }
@@ -586,7 +595,11 @@ footer { color: var(--muted); font-size: 0.84rem; border-top: 1px solid var(--li
       <span class="dur none"><i></i><span data-i18n="dur_none"></span></span>
     </div>
     <div class="table-scroll">
-      <table>
+      <table id="cmpTable">
+        <colgroup>
+          <col style="width:6%"><col style="width:16%"><col style="width:8%"><col style="width:8%"><col style="width:10%">
+          <col style="width:8%"><col style="width:7%"><col style="width:14%"><col style="width:10%"><col style="width:13%">
+        </colgroup>
         <thead><tr>
           <th data-i18n="th_fit"></th><th data-i18n="th_ball"></th><th data-i18n="th_type"></th><th data-i18n="th_alt"></th><th data-i18n="th_temp"></th><th data-i18n="th_hum"></th><th data-i18n="th_court"></th><th data-i18n="th_dur"></th><th data-i18n="th_appr"></th><th data-i18n="th_notes"></th>
         </tr></thead>
@@ -752,7 +765,8 @@ footer { color: var(--muted); font-size: 0.84rem; border-top: 1px solid var(--li
     if (vars) for (const v in vars) s = s.split("{" + v + "}").join(vars[v]);
     return s;
   };
-  const tEnum = s => (I18N[lang] && I18N[lang].enum && I18N[lang].enum[s]) || s;
+  // a zero-width space after each dash lets ranges like "Cold–mild" wrap in narrow table cells
+  const tEnum = s => ((I18N[lang] && I18N[lang].enum && I18N[lang].enum[s]) || s).replace(/–/g, "–​");
   const tBall = (id, f) => (I18N[lang] && I18N[lang].balls && I18N[lang].balls[id] && I18N[lang].balls[id][f]) || I18N.en.balls[id][f];
   const loc = () => LOCALE[lang] || "en-GB";
   const num = n => Math.round(n).toLocaleString(loc());
@@ -1172,6 +1186,24 @@ If the place is unknown or ambiguous, reply {"error": "short reason"}.`;
         <td class="note">${esc(tBall(b.id, "note"))}</td>
       </tr>`;
     }).join("");
+    softenTable();
+  }
+
+  // long words in the comparison table get soft hyphens (shown only where a line actually breaks),
+  // so German or Russian words wrap like print instead of widening the table; scripts without spaces are left alone
+  function softenTable() {
+    if (["zh", "ja", "ar", "hi"].includes(lang)) return;
+    const walker = document.createTreeWalker($("cmpTable"), NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      if (n.nodeValue.includes("­")) continue;
+      // split words of 9+ letters into chunks of 4, leaving at least 4 letters on the last line
+      n.nodeValue = n.nodeValue.replace(/\p{L}{9,}/gu, w => {
+        const parts = []; let i = 0;
+        while (w.length - i > 7) { parts.push(w.slice(i, i + 4)); i += 4; }
+        parts.push(w.slice(i));
+        return parts.join("­");
+      });
+    }
   }
 
   function positionLine(E) {
